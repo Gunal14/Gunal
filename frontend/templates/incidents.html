@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Safety Monitor - Incidents</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <span>AI Safety Monitor</span>
+                        <small>Smart CCTV Command</small>
+                    </div>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/dashboard" class="sidebar-link"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/monitoring" class="sidebar-link"><i class="fas fa-video"></i> Cameras</a></li>
+                <li><a href="/incidents" class="sidebar-link active"><i class="fas fa-list"></i> Incidents</a></li>
+                <li><a href="/analytics" class="sidebar-link"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li><a href="/employees" class="sidebar-link"><i class="fas fa-users"></i> Employees</a></li>
+                <li><a href="/settings" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <span>Real-time AI safety monitoring</span>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <div class="page-badge"><i class="fas fa-exclamation-triangle"></i> Incidents</div>
+                    <h1>Incident Management</h1>
+                    <p>Review recent alerts, incident details, and action status for the safety team.</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-soft" onclick="window.location.href='/dashboard'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+                    <div class="profile-chip">
+                        <div>
+                            <span id="userName">Loading...</span>
+                            <small id="userRole">Loading...</small>
+                        </div>
+                        <img id="userImage" src="" alt="User profile">
+                    </div>
+                    <button class="btn btn-danger" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </header>
+
+            <section class="dashboard-panel-grid">
+                <div class="panel panel-large">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Recent Alerts</h2>
+                            <p>All triggered safety alerts with priority and response status.</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                    <div class="panel-body" style="padding: 24px;">
+                        <table class="incident-table" style="width:100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Camera</th>
+                                    <th>Violation</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>10:34 AM</td>
+                                    <td>CAM-002</td>
+                                    <td>No Helmet</td>
+                                    <td class="text-danger">Critical</td>
+                                    <td>Active</td>
+                                </tr>
+                                <tr>
+                                    <td>10:28 AM</td>
+                                    <td>CAM-004</td>
+                                    <td>No Safety Vest</td>
+                                    <td class="text-warning">High</td>
+                                    <td>Investigating</td>
+                                </tr>
+                                <tr>
+                                    <td>10:12 AM</td>
+                                    <td>CAM-001</td>
+                                    <td>Unauthorized Zone</td>
+                                    <td class="text-danger">Critical</td>
+                                    <td>Active</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <aside class="panel panel-side">
+                    <div class="panel-card">
+                        <div class="panel-head">
+                            <h3>Action Status</h3>
+                        </div>
+                        <div class="panel-body compact-list">
+                            <div><strong>Open Incidents</strong><span>5</span></div>
+                            <div><strong>Resolved</strong><span>12</span></div>
+                            <div><strong>Escalated</strong><span>2</span></div>
+                            <div><strong>Average Response</strong><span>45s</span></div>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="panel-head">
+                            <h3>Next Steps</h3>
+                        </div>
+                        <div class="panel-body compact-list">
+                            <div>Review camera feeds for active violations</div>
+                            <div>Send alert notifications to safety crew</div>
+                            <div>Log incident reports</div>
+                        </div>
+                    </div>
+                </aside>
+            </section>
+        </main>
+    </div>
+    <script>
+        function getAuthToken() {
+            return localStorage.getItem('access_token');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        function updateUserProfile(data) {
+            document.getElementById('userName').textContent = data.name || data.username || 'Unknown User';
+            document.getElementById('userRole').textContent = data.role || 'Operator';
+            document.getElementById('userImage').src = data.image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%2300d1ff%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22 fill=%22white%22 font-family=%22Arial%22%3EU%3C/text%3E%3C/svg%3E';
+        }
+
+        async function loadUserProfile() {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+            if (storedUser) {
+                updateUserProfile({
+                    name: storedUser.first_name ? `${storedUser.first_name} ${storedUser.last_name || ''}`.trim() : storedUser.username,
+                    role: storedUser.role || 'Operator',
+                    image: storedUser.image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%2300d1ff%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22 fill=%22white%22 font-family=%22Arial%22%3EU%3C/text%3E%3C/svg%3E'  
+                });
+            }
+
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                if (result && result.success && result.user) {
+                    const user = result.user;
+                    updateUserProfile({
+                        name: user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.username,
+                        role: user.role || 'Operator',
+                        image: user.image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%2300d1ff%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22 fill=%22white%22 font-family=%22Arial%22%3EU%3C/text%3E%3C/svg%3E'
+                    });
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+            } catch (error) {
+                console.warn('Could not refresh user profile:', error);
+            }
+        }
+
+        window.addEventListener('load', loadUserProfile);
+    </script>
+</body>
+</html>

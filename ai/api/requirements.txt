@@ -1,0 +1,61 @@
+# AI Server Dependencies
+
+# Core Framework
+fastapi==0.104.0
+uvicorn==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Image Processing
+opencv-python==4.8.1
+Pillow==10.1.0
+
+# Data Processing
+numpy==1.24.3
+scipy==1.11.4
+
+# Async Support
+asyncio-contextmanager==1.0.0
+aiofiles==23.2.1
+
+# Performance & Monitoring
+psutil==5.9.6
+py-cpuinfo==9.0.0
+
+# Utilities
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Optional: Machine Learning Frameworks
+# Uncomment as needed for your models
+
+# PyTorch (for YOLO, Faster R-CNN, etc.)
+# torch==2.1.1
+# torchvision==0.16.1
+# torchaudio==2.1.1
+
+# TensorFlow (alternative framework)
+# tensorflow==2.14.0
+
+# ONNX Runtime (efficient inference)
+# onnxruntime==1.16.3
+
+# Model-specific libraries
+# ultralytics==8.0.0  # YOLOv8
+# timm==0.9.10  # Timm models
+# transformers==4.35.2  # HuggingFace models
+
+# Optional: GPU Acceleration
+# tensorrt==8.6.0  # NVIDIA TensorRT
+# onnx==1.15.0
+
+# Development & Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.12.0
+flake8==6.1.0
+mypy==1.7.1
+
+# Documentation
+sphinx==7.2.6
+sphinx-rtd-theme==2.0.0

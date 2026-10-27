@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - AI Safety Monitoring System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #071023;
+            --bg-secondary: #09142f;
+            --bg-panel: rgba(10, 22, 48, 0.94);
+            --border: rgba(255, 255, 255, 0.08);
+            --accent-primary: #00d1ff;
+            --accent-secondary: #ff9c43;
+            --danger: #ff5b5b;
+            --success: #28d88f;
+            --text-primary: #f4f8ff;
+            --text-secondary: #9db7d9;
+            --text-muted: #6f86af;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top left, rgba(0, 209, 255, 0.12), transparent 22%),
+                        radial-gradient(circle at bottom right, rgba(255, 156, 67, 0.08), transparent 16%),
+                        linear-gradient(180deg, #05101f 0%, #081424 52%, #071023 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.26;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Digital grid network background */
+        body::after {
+            content: "";
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            background-image: none;
+            pointer-events: none;
+            z-index: 0;
+        }
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-section h1 {
+            font-size: 2.2em;
+            color: var(--cyber-accent-primary);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .logo-section i {
+            font-size: 1.1em;
+        }
+
+        .logo-section p {
+            color: var(--cyber-text-secondary);
+            font-size: 0.9em;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .register-box {
+            width: 100%;
+            max-width: 500px;
+            background: var(--cyber-bg-panel);
+            border: 2px solid var(--cyber-accent-secondary);
+            border-radius: 12px;
+            box-shadow: gray , inset 0 0 20px rgba(124, 58, 237, 0.05);
+            padding: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .register-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--cyber-accent-secondary), transparent);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(0); left: -100%; }
+            100% { transform: translateY(0); left: 100%; }
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--cyber-border);
+        }
+
+        .register-header h2 {
+            font-size: 1.8em;
+            color: var(--cyber-accent-secondary);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .register-header p {
+            font-size: 0.9em;
+            color: var(--cyber-accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-sizlabel {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent-primary);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid var(--border);
+            background: rgba(0, 209, 255, 0.05);
+            color: var(--text-primary);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9em;
+            transition: all 0.25s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(0, 209, 255, 0.2), inset 0 0 10px rgba(0, 209, 255, 0.05);
+            background: rgba(0, 209, 255, 0.08);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-mutedsecondary);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.4), inset 0 0 10px rgba(124, 58, 237, 0.1);
+            background: rgba(124, 58, 237, 0.05);
+        }
+
+        .form-group input::placeholder {
+            color: var(--cyber-text-secondary);
+        }
+
+        .password-strength {
+            font-size: 0.85em;
+            margin-top: 6px;
+            color: var(--cyber-text-secondary);
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--cyber-border);
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--cyber-warning);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-fill.weak {
+            width: 33%;
+            background: var(--cyber-warning);
+        }
+
+        .strength-fill.medium {
+            width: 66%;
+            background: #FFB800;
+        }
+
+        .strength-fill.strong {
+            width: 100%;
+            background: var(--cyber-success);
+        }
+
+        .terms-agreement {
+            margin-bottom: 25px;
+            font-size: 0.85em;
+            color: var(--cyber-text-secondary);
+        }
+
+        .terms-agreement input[type="checkbox"] {
+            margin-right: 6px;
+            cursor: pointer;
+        }accent-secondary), var(--accent-primary));
+            border: 1px solid var(--accent-secondary);
+            color: #041021;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.25s ease
+
+        .btn-register {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--cyber-accent-secondary), #00D4FF);
+            border: 2px solid var(--cyber-accent-secondary);
+            color:white;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-register:hover {
+            box-shadow: 0 0 25px rgba(124, 58, 237, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid var(--cyber-warning);
+            color: var(--cyber-warning);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 156, 0.1);
+            border: 1px solid var(--cyber-success);
+            color: var(--cyber-success);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--cyber-border);
+            font-size: 0.9em;
+            color: var(--cyber-text-secondary);
+        }
+
+        .login-link a {
+            color: var(--cyber-accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: var(--cyber-accent-secondary);
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            color: var(--cyber-accent-secondary);
+        }
+
+        .loading-spinner i {
+            font-size: 2em;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .register-box {
+                padding: 25px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-section h1 {
+                font-size: 1.6em;
+            }
+
+            .register-header h2 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <h1><i class="fas fa-shield-alt"></i> SAFETY MONITOR</h1>
+            <p>Create Your Account</p>
+        </div>
+
+        <!-- Register Box -->
+        <div class="register-box">
+            <!-- Animated Top Border -->
+            
+            <!-- Register Header -->
+            <div class="register-header">
+                <h2><i class="fas fa-user-plus"></i> REGISTER</h2>
+                <p>Join Our Security System</p>
+            </div>
+
+            <!-- Messages -->
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <!-- Register Form -->
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <!-- Name Fields -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName"><i class="fas fa-user"></i> First Name</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="First name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName"><i class="fas fa-user"></i> Last Name</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Last name" required>
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                </div>
+
+                <!-- Username Field -->
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="newUsername"><i class="fas fa-at"></i> Username</label>
+                        <input type="text" id="newUsername" name="username" placeholder="Username (min 3 characters)" minlength="3" required>
+                    </div>
+                </div>
+
+                <!-- Mobile Number Field (NEW) -->
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="mobileNumber"><i class="fas fa-mobile-alt"></i> Mobile Number (Emergency Contact) *</label>
+                        <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="+1-234-567-8900" title="Format: +[Country Code]-[Number]" required>
+                        <small style="color: var(--cyber-text-secondary); display: block; margin-top: 4px;">
+                            ⓘ This will be your primary emergency alert number. Format: +1-234-567-8900
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="newPassword"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="newPassword" name="password" placeholder="Strong password required" required onkeyup="checkPasswordStrength()">
+                        <div class="password-strength">
+                            Strength: <span id="strengthText">Weak</span>
+                            <div class="strength-bar">
+                                <div id="strengthBar" class="strength-fill weak"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="confirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" required>
+                    </div>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="role"><i class="fas fa-briefcase"></i> Role</label>
+                        <select id="role" name="role" required>
+                            <option value="">Select your role</option>
+                            <option value="operator">System Operator</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="administrator">Administrator</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Terms Agreement -->
+                <div class="terms-agreement">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    I agree to the <a href="#terms">Terms of Service</a> and <a href="#privacy">Privacy Policy</a>
+                </div>
+
+                <button type="submit" class="btn-register">
+                    <i class="fas fa-check"></i> CREATE ACCOUNT
+                </button>
+            </form>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading-spinner">
+                <i class="fas fa-spinner"></i>
+                <p>Creating account...</p>
+            </div>
+
+            <!-- Login Link -->
+            <div class="login-link">
+                Already have an account? <a href="/login">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[@$!%*?&]+/)) strength++;
+
+            strengthBar.className = 'strength-fill';
+
+            if (strength < 2) {
+                strengthBar.classList.add('weak');
+                strengthText.textContent = 'Weak';
+            } else if (strength < 4) {
+                strengthBar.classList.add('medium');
+                strengthText.textContent = 'Medium';
+            } else {
+                strengthBar.classList.add('strong');
+                strengthText.textContent = 'Strong';
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('newUsername').value;
+            const mobileNumber = document.getElementById('mobileNumber').value;  // NEW
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const role = document.getElementById('role').value;
+
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            // Clear messages
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+
+            // Validate form
+            if (!firstName || !lastName || !email || !username || !password || !confirmPassword || !role || !mobileNumber) {
+                showError('Please fill in all fields including mobile number');
+                return;
+            }
+
+            if (username.length < 3) {
+                showError('Username must be at least 3 characters long');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters long');
+                return;
+            }
+
+            // Validate phone number format
+            const phoneRegex = /^\+?[\d\s\-()]{10,}$/;
+            if (!phoneRegex.test(mobileNumber)) {
+                showError('Please enter a valid phone number (e.g., +1-234-567-8900)');
+                return;
+            }
+
+            const form = document.getElementById('registerForm');
+            const spinner = document.getElementById('loadingSpinner');
+
+            // Show loading
+            form.style.display = 'none';
+            spinner.style.display = 'block';
+
+            // Send registration request
+            fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    password: password,
+                    confirm_password: confirmPassword,
+                    first_name: firstName,
+                    last_name: lastName,
+                    mobile_number: mobileNumber,  // NEW
+                    role: role
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    spinner.style.display = 'none';
+                    successMessage.textContent = 'Registration successful! Redirecting to login...';
+                    successMessage.classList.add('show');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 3000);
+                } else {
+                    showError(data.error || 'Registration failed. Please try again.');
+                    form.style.display = 'block';
+                    spinner.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                showError('Connection error. Please try again.');
+                form.style.display = 'block';
+                spinner.style.display = 'none';
+            });
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Check if already logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                window.location.href = '/dashboard';
+            }
+        });
+    </script>
+</body>
+</html>

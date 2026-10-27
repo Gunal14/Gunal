@@ -1,0 +1,126 @@
+# Environment variables and credentials
+.env*
+!.env.example
+!.env.template
+*.pem
+*.key
+credentials*.json
+secrets*.json
+
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+ai_env/
+**/ai_env/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+recordings/
+video_logs/
+*.log
+*.pot
+*.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS
+Thumbs.db
+.DS_Store
+*.tmp
+
+# Temporary files
+temp/
+tmp/
+*.bak
+*.out
+*.cache
+.cache/
+opencv_cache/
+opencv_cache_*/
+
+# Application specific
+/dataset/
+/datasets/
+**/datasets/
+/static/uploads/
+/data/
+/results/
+/models/
+config_local.py
+secrets.py
+users.json
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build
+dist/
+build/
+
+# Video and computer-vision model artifacts
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.mpeg
+*.mpg
+*.m4v
+*.weights
+*.pt
+*.pth
+*.onnx
+*.engine
+*.h5
+*.keras
+*.tflite

@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24/7 Live Monitoring - Safety System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background: radial-gradient(circle at top left, rgba(0, 209, 255, 0.12), transparent 22%),
+                        radial-gradient(circle at bottom right, rgba(255, 156, 67, 0.08), transparent 16%),
+                        linear-gradient(180deg, #05101f 0%, #081424 52%, #071023 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.26;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(8, 16, 35, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 4px solid var(--accent-primary);
+            color: var(--text-primary);
+            padding: 24px 26px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+        }
+
+        .header h1 {
+            font-size: 1.6em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+            font-weight: 800;
+        }
+
+        .time-display {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 6px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.active {
+            background: linear-gradient(135deg, var(--success), rgba(40, 216, 143, 0.6));
+            color: white;
+        }
+
+        .status-badge.inactive {
+            background: rgba(255, 91, 91, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(255, 91, 91, 0.3);
+        }
+
+        .profile-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .profile-chip div {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .profile-chip span {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .profile-chip small {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .profile-chip img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-primary);
+        }
+
+        .control-panel {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .control-panel button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn {
+            background: var(--accent-primary);
+            color: #041021;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 209, 255, 0.3);
+        }
+
+        .btn-soft {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-soft:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff3322;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            display: none;
+            background: rgba(255, 91, 91, 0.15);
+            border: 1px solid rgba(255, 91, 91, 0.3);
+            color: var(--danger);
+            padding: 16px 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(8, 16, 35, 0.96);
+            border: 1px solid rgba(0, 209, 255, 0.2);
+            border-left: 4px solid var(--accent-primary);
+            border-radius: 16px;
+            padding: 20px 22px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card h3 {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .value {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .live-alert-banner {
+            background: rgba(255, 91, 91, 0.12);
+            border: 1px solid rgba(255, 91, 91, 0.24);
+            color: #ffb3b0;
+            padding: 18px 22px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            box-shadow: 0 8px 30px rgba(255, 91, 91, 0.08);
+            animation: alertPulse 2s infinite;
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        .live-alert-banner strong {
+            color: #ff8a85;
+            font-weight: 700;
+        }
+
+        .live-alert-banner button {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.25s ease;
+        }
+
+        .live-alert-banner button:hover {
+            background: #ff3322;
+            transform: translateY(-2px);
+        }
+
+        .cameras-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .camera-card {
+            background: rgba(8, 16, 35, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.25s ease;
+        }
+
+        .camera-card:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 15px 40px rgba(0, 209, 255, 0.15);
+        }
+
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .camera-location {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .camera-header small {
+            color: var(--text-secondary);
+            display: block;
+            margin-top: 4px;
+        }
+
+        .camera-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px rgba(40, 216, 143, 0.5);
+        }
+
+        .camera-indicator.offline {
+            background: var(--danger);
+            box-shadow: 0 0 10px rgba(255, 91, 91, 0.5);
+        }
+
+        .camera-stream {
+            position: relative;
+            min-height: 240px;
+            background: rgba(1, 6, 18, 0.8);
+            overflow: hidden;
+        }
+
+        .camera-stream.loading::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(0, 209, 255, 0.3), transparent);
+            animation: streamLoading 1.5s infinite;
+        }
+
+        @keyframes streamLoading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .camera-stream img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .camera-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .no-cameras {
+            grid-column: 1 / -1;
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            background: rgba(8, 16, 35, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .cameras-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>
+                    <span class="refresh-indicator"></span>
+                    24/7 Live Monitoring System
+                </h1>
+                <div class="time-display" id="currentTime">Loading...</div>
+            </div>
+            <div class="header-right">
+                <span class="status-badge active" id="monitoringStatus">
+                    MONITORING ACTIVE
+                </span>
+                <button class="btn btn-soft" onclick="window.location.href='/employees'"><i class="fas fa-users"></i> Employees</button>
+                <div class="profile-chip">
+                    <div>
+                        <span id="userName">Loading...</span>
+                        <small id="userRole">Loading...</small>
+                    </div>
+                    <img id="userImage" src="" alt="User profile">
+                </div>
+                <button class="btn btn-danger" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+
+        <!-- Live Alarm Banner -->
+        <div class="live-alert-banner" id="liveAlertBanner" style="display: none;">
+            <div>
+                <strong>ALERT ACTIVE:</strong>
+                <span id="liveAlertText">No workers detected without PPE.</span>
+            </div>
+            <button onclick="silenceAlarm()">Silence Alarm</button>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage"></div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <button id="startBtn" onclick="startMonitoring()">Start Monitoring</button>
+            <button id="stopBtn" class="danger" onclick="stopMonitoring()">Stop Monitoring</button>
+            <button onclick="refreshStatus()">Refresh Status</button>
+            <button onclick="addNewCamera()">Add Camera</button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Active Cameras</h3>
+                <div class="value" id="activeCameras">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Frames</h3>
+                <div class="value" id="totalFrames">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Detections</h3>
+                <div class="value" id="totalDetections">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Uptime</h3>
+                <div class="value" id="uptime">0h</div>
+            </div>
+        </div>
+
+        <!-- Cameras Grid -->
+        <div class="cameras-grid" id="camerasContainer">
+            <div class="no-cameras">
+                Loading cameras... <span class="refresh-indicator"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        function getAuthToken() {
+            return localStorage.getItem('access_token');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        function updateUserProfile(data) {
+            document.getElementById('userName').textContent = data.name || data.username || 'Unknown User';
+            document.getElementById('userRole').textContent = data.role || 'Operator';
+            document.getElementById('userImage').src = data.image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%2300d1ff%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22 fill=%22white%22 font-family=%22Arial%22%3EU%3C/text%3E%3C/svg%3E';
+        }
+
+        async function loadUserProfile() {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+            if (storedUser) {
+                updateUserProfile({
+                    name: storedUser.first_name ? `${storedUser.first_name} ${storedUser.last_name || ''}`.trim() : storedUser.username,
+                    role: storedUser.role || 'Operator',
+                    image: storedUser.image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%2300d1ff%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22 fill=%22white%22 font-family=%22Arial%22%3EU%3C/text%3E%3C/svg%3E'
+                });
+            }
+
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                if (result && result.success && result.user) {
+                    const user = result.user;
+                    updateUserProfile({
+                        name: user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.username,
+                        role: user.role || 'Operator',
+                        image: user.image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%2300d1ff%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2280%22 fill=%22white%22 font-family=%22Arial%22%3EU%3C/text%3E%3C/svg%3E'
+                    });
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+            } catch (error) {
+                console.warn('Could not refresh user profile:', error);
+            }
+        }
+
+        // API call helper
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            try {
+                const authToken = getAuthToken();
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const options = {
+                    method,
+                    headers
+                };
+
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('access_token');
+                        localStorage.removeItem('refresh_token');
+                        localStorage.removeItem('user');
+                        window.location.href = '/login';
+                        return null;
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                showError(`API Error: ${error.message}`);
+                return null;
+            }
+        }
+
+        let refreshInterval = null;
+        let eventSource = null;
+        let eventRetry = 0;
+        const EVENT_MAX_RETRY = 6;
+        const EVENT_BASE_DELAY = 2000; // ms
+
+        // WebSocket fallback + heartbeat
+        let ws = null;
+        let lastEventTimestamp = null;
+        const HEARTBEAT_INTERVAL = 10000; // check every 10s
+        const HEARTBEAT_TIMEOUT = 30000; // consider disconnected after 30s
+        let heartbeatTimer = null;
+
+        function connectEventStream() {
+            const token = getAuthToken();
+            if (!token) {
+                showError('Authentication required for live updates.');
+                if (!refreshInterval) refreshInterval = setInterval(refreshStatus, 5000);
+                return;
+            }
+
+            if (!window.EventSource) {
+                showError('Real-time updates are not supported by this browser. Falling back to polling.');
+                if (!refreshInterval) refreshInterval = setInterval(refreshStatus, 5000);
+                return;
+            }
+
+            const streamUrl = `${API_BASE}/monitoring/events?token=${encodeURIComponent(token)}`;
+
+            // close any existing connection first
+            if (eventSource) {
+                try { eventSource.close(); } catch (e) {}
+                eventSource = null;
+            }
+
+            eventSource = new EventSource(streamUrl);
+
+            eventSource.onopen = () => {
+                eventRetry = 0;
+                lastEventTimestamp = Date.now();
+                startHeartbeat();
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                    refreshInterval = null;
+                }
+            };
+
+            eventSource.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    lastEventTimestamp = Date.now();
+                    handleRealtimeUpdate(data);
+                } catch (error) {
+                    console.warn('Realtime update parse error:', error);
+                }
+            };
+
+            eventSource.onerror = (err) => {
+                // Close current connection and attempt to reconnect with backoff
+                try { eventSource.close(); } catch (e) {}
+                eventSource = null;
+
+                // show a brief message but keep it non-intrusive
+                showError('Realtime stream disconnected; attempting to reconnect...');
+
+                // start polling as a fallback while reconnecting
+                if (!refreshInterval) refreshInterval = setInterval(refreshStatus, 5000);
+
+                // schedule reconnect with exponential backoff
+                eventRetry = Math.min(EVENT_MAX_RETRY, eventRetry + 1);
+                if (eventRetry >= EVENT_MAX_RETRY) {
+                    // try WebSocket fallback once retries exhausted
+                    tryWebSocketFallback();
+                } else {
+                    const delay = EVENT_BASE_DELAY * Math.pow(2, eventRetry - 1);
+                    setTimeout(() => {
+                        connectEventStream();
+                    }, delay);
+                }
+            };
+        }
+
+        function startHeartbeat() {
+            if (heartbeatTimer) return;
+            heartbeatTimer = setInterval(() => {
+                if (!lastEventTimestamp) return;
+                const age = Date.now() - lastEventTimestamp;
+                if (age > HEARTBEAT_TIMEOUT) {
+                    // no events for a while — reconnect
+                    showError('Realtime heartbeat lost — reconnecting...');
+                    // try SSE first
+                    try { if (eventSource) eventSource.close(); } catch (e) {}
+                    eventSource = null;
+                    // attempt reconnect
+                    connectEventStream();
+                }
+            }, HEARTBEAT_INTERVAL);
+        }
+
+        function stopHeartbeat() {
+            if (heartbeatTimer) {
+                clearInterval(heartbeatTimer);
+                heartbeatTimer = null;
+            }
+        }
+
+        async function tryWebSocketFallback() {
+            if (ws) try { ws.close(); } catch (e) {}
+            const token = getAuthToken();
+            if (!token) return;
+
+            const host = location.host;
+            const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+            const candidates = [
+                `${protocol}://${host}/ws/monitoring?token=${encodeURIComponent(token)}`,
+                `${protocol}://${host}${API_BASE}/monitoring/ws?token=${encodeURIComponent(token)}`,
+            ];
+
+            // try endpoints sequentially
+            for (const url of candidates) {
+                try {
+                    ws = new WebSocket(url);
+
+                    ws.onopen = () => {
+                        showError('Connected via WebSocket fallback.');
+                        if (refreshInterval) { clearInterval(refreshInterval); refreshInterval = null; }
+                        lastEventTimestamp = Date.now();
+                        startHeartbeat();
+                    };
+
+                    ws.onmessage = (evt) => {
+                        try {
+                            const data = JSON.parse(evt.data);
+                            lastEventTimestamp = Date.now();
+                            handleRealtimeUpdate(data);
+                        } catch (e) {
+                            console.warn('WS message parse error', e);
+                        }
+                    };
+
+                    ws.onerror = () => {
+                        try { ws.close(); } catch (e) {}
+                        ws = null;
+                    };
+
+                    ws.onclose = () => {
+                        ws = null;
+                        // fall back to polling and SSE reconnect
+                        if (!refreshInterval) refreshInterval = setInterval(refreshStatus, 5000);
+                    };
+
+                    // if ws was created without throwing, stop trying other endpoints
+                    return;
+                } catch (e) {
+                    console.warn('WebSocket connect failed for', url, e);
+                    ws = null;
+                }
+            }
+        }
+
+        function handleRealtimeUpdate(data) {
+            if (!data || !data.monitoring) return;
+
+            const monitoring = data.monitoring;
+            document.getElementById('activeCameras').textContent = `${monitoring.connected_cameras}/${monitoring.total_cameras}`;
+            document.getElementById('totalFrames').textContent = monitoring.total_frames_captured.toLocaleString();
+            document.getElementById('totalDetections').textContent = monitoring.total_detections.toLocaleString();
+
+            if (monitoring.uptime_seconds) {
+                const hours = Math.floor(monitoring.uptime_seconds / 3600);
+                const minutes = Math.floor((monitoring.uptime_seconds % 3600) / 60);
+                document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+            }
+
+            const badge = document.getElementById('monitoringStatus');
+            if (monitoring.monitoring_enabled) {
+                badge.textContent = 'MONITORING ACTIVE';
+                badge.classList.add('active');
+                badge.classList.remove('inactive');
+            } else {
+                badge.textContent = 'MONITORING INACTIVE';
+                badge.classList.remove('active');
+                badge.classList.add('inactive');
+            }
+
+            if (Array.isArray(data.cameras)) {
+                renderCameraCards(data.cameras);
+            }
+
+            if (data.active_alerts > 0 && Array.isArray(data.alerts) && data.alerts.length > 0) {
+                displayLiveAlert(data.alerts[0]);
+            } else {
+                clearLiveAlert();
+            }
+        }
+
+        function renderCameraCards(cameras) {
+            const container = document.getElementById('camerasContainer');
+            if (!Array.isArray(cameras) || cameras.length === 0) {
+                container.innerHTML = '<div class="no-cameras">No cameras configured. Add one to start monitoring.</div>';
+                return;
+            }
+
+            const token = getAuthToken();
+            const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : '';
+
+            container.innerHTML = cameras.map(camera => `
+                <div class="camera-card">
+                    <div class="camera-header">
+                        <div>
+                            <div class="camera-location">${camera.location}</div>
+                            <small>Camera ID: ${camera.camera_id}</small>
+                        </div>
+                        <div class="camera-indicator ${camera.is_connected ? '' : 'offline'}"></div>
+                    </div>
+                    <div class="camera-stream loading" id="stream-${camera.camera_id}">
+                        <img src="${API_BASE}/monitoring/stream/${camera.camera_id}${tokenQuery}" 
+                             alt="Stream" 
+                             onerror="this.parentElement.innerHTML='Stream unavailable'"
+                             onload="this.parentElement.classList.remove('loading')">
+                    </div>
+                    <div class="camera-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Status</span>
+                            <span class="stat-value">${camera.is_connected ? 'Connected' : 'Offline'}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">FPS</span>
+                            <span class="stat-value">${camera.average_fps}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frames</span>
+                            <span class="stat-value">${parseInt(camera.total_frames || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Detections</span>
+                            <span class="stat-value">${parseInt(camera.total_detections || 0).toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        }
+
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+        }
+
+        // Refresh monitoring status
+        async function refreshStatus() {
+            const status = await apiCall('/monitoring/status');
+            if (!status || !status.success) return;
+
+            const monitoring = status.monitoring_status;
+
+            // Update stats
+            document.getElementById('activeCameras').textContent = 
+                monitoring.connected_cameras + '/' + monitoring.total_cameras;
+            document.getElementById('totalFrames').textContent = 
+                monitoring.total_frames_captured.toLocaleString();
+            document.getElementById('totalDetections').textContent = 
+                monitoring.total_detections.toLocaleString();
+
+            if (monitoring.uptime_seconds) {
+                const hours = Math.floor(monitoring.uptime_seconds / 3600);
+                const minutes = Math.floor((monitoring.uptime_seconds % 3600) / 60);
+                document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+            }
+
+            // Update monitoring badge
+            const badge = document.getElementById('monitoringStatus');
+            if (monitoring.monitoring_enabled) {
+                badge.textContent = 'MONITORING ACTIVE';
+                badge.classList.add('active');
+                badge.classList.remove('inactive');
+            } else {
+                badge.textContent = 'MONITORING INACTIVE';
+                badge.classList.remove('active');
+                badge.classList.add('inactive');
+            }
+
+            // Load cameras
+            await loadCameras();
+            await loadLiveAlerts();
+        }
+
+        // Load all cameras
+        async function loadCameras() {
+            const response = await apiCall('/monitoring/cameras');
+            if (!response || !response.success) return;
+
+            const token = getAuthToken();
+            const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : '';
+            const container = document.getElementById('camerasContainer');
+            
+            if (response.cameras.length === 0) {
+                container.innerHTML = '<div class="no-cameras">No cameras configured. Add one to start monitoring.</div>';
+                return;
+            }
+
+            container.innerHTML = response.cameras.map(camera => `
+                <div class="camera-card">
+                    <div class="camera-header">
+                        <div>
+                            <div class="camera-location">${camera.location}</div>
+                            <small>Camera ID: ${camera.camera_id}</small>
+                        </div>
+                        <div class="camera-indicator ${camera.is_connected ? '' : 'offline'}"></div>
+                    </div>
+                    <div class="camera-stream loading" id="stream-${camera.camera_id}">
+                        <img src="${API_BASE}/monitoring/stream/${camera.camera_id}${tokenQuery}" 
+                             alt="Stream" 
+                             onerror="this.parentElement.innerHTML='Stream unavailable'"
+                             onload="this.parentElement.classList.remove('loading')">
+                    </div>
+                    <div class="camera-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Status</span>
+                            <span class="stat-value">${camera.is_connected ? 'Connected' : 'Offline'}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">FPS</span>
+                            <span class="stat-value">${camera.average_fps}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frames</span>
+                            <span class="stat-value">${camera.total_frames.toLocaleString()}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Detections</span>
+                            <span class="stat-value">${camera.total_detections.toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Start monitoring
+        async function startMonitoring() {
+            const result = await apiCall('/monitoring/start', 'POST');
+            if (result && result.success) {
+                await refreshStatus();
+            }
+        }
+
+        // Stop monitoring
+        async function stopMonitoring() {
+            if (confirm('Are you sure you want to stop monitoring all cameras?')) {
+                const result = await apiCall('/monitoring/stop', 'POST');
+                if (result && result.success) {
+                    await refreshStatus();
+                }
+            }
+        }
+
+        // Load live alerts and show alarm status
+        async function loadLiveAlerts() {
+            const summary = await apiCall('/dashboard/summary');
+            if (!summary || !summary.success || !summary.data) {
+                clearLiveAlert();
+                return;
+            }
+
+            const summaryData = summary.data;
+            if (summaryData.active_alerts > 0 && Array.isArray(summaryData.alerts) && summaryData.alerts.length > 0) {
+                displayLiveAlert(summaryData.alerts[0]);
+            } else {
+                clearLiveAlert();
+            }
+        }
+
+        function displayLiveAlert(alert) {
+            const banner = document.getElementById('liveAlertBanner');
+            const alertText = document.getElementById('liveAlertText');
+            banner.style.display = 'flex';
+            alertText.textContent = `${alert.title}: ${alert.message}`;
+            playAlarm();
+        }
+
+        function clearLiveAlert() {
+            const banner = document.getElementById('liveAlertBanner');
+            banner.style.display = 'none';
+            stopAlarm();
+        }
+
+        function playAlarm() {
+            if (window.liveAlarmPlaying) return;
+            window.liveAlarmPlaying = true;
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = context.createOscillator();
+            const gainNode = context.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, context.currentTime);
+            gainNode.gain.setValueAtTime(0.08, context.currentTime);
+            oscillator.connect(gainNode);
+            gainNode.connect(context.destination);
+            oscillator.start();
+            window.liveAlarmOscillator = oscillator;
+            window.liveAlarmContext = context;
+        }
+
+        function stopAlarm() {
+            if (!window.liveAlarmPlaying) return;
+            if (window.liveAlarmOscillator) {
+                window.liveAlarmOscillator.stop();
+                window.liveAlarmOscillator.disconnect();
+                window.liveAlarmOscillator = null;
+            }
+            if (window.liveAlarmContext) {
+                window.liveAlarmContext.close();
+                window.liveAlarmContext = null;
+            }
+            window.liveAlarmPlaying = false;
+        }
+
+        function silenceAlarm() {
+            clearLiveAlert();
+        }
+
+        // Add new camera
+        function addNewCamera() {
+            const cameraId = prompt('Enter Camera ID:');
+            if (!cameraId) return;
+
+            const source = prompt('Enter Camera Source (URL or 0-3 for webcam):');
+            if (!source) return;
+
+            const location = prompt('Enter Camera Location/Name:');
+            if (!location) return;
+
+            apiCall(`/monitoring/cameras/${cameraId}/add`, 'POST', {
+                source: isNaN(source) ? source : parseInt(source),
+                location: location,
+                auto_start: true
+            }).then(result => {
+                if (result && result.success) {
+                    alert(`Camera ${cameraId} added successfully!`);
+                    refreshStatus();
+                }
+            });
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            loadUserProfile();
+            updateTime();
+            setInterval(updateTime, 1000);
+            refreshStatus();
+            connectEventStream();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('unload', () => {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            if (eventSource) {
+                eventSource.close();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+
+Suggested datasets for helmet detection and safety monitoring:
+
+1. Kaggle Helmet Detection Dataset
+2. Construction Safety Dataset
+3. Worker Safety Gear Dataset
+
+Dataset folder structure:
+
+dataset/
+   helmet/
+   no_helmet/
+   worker/
+   machine/
+
+Images should be labeled to train the detection model.
